@@ -1,41 +1,45 @@
 #ifndef PHILOSOPHERS_H
-# define PHILOSOPHERS_H
+# define PHILOSOPHERS_Ho999
 
 # include <pthread.h>
 # include <stdio.h>
+# include <string.h>
 # include <stdlib.h>
 # include <sys/time.h>
-# include <unistd.h>
+#include <unistd.h>
 
-typedef struct s_philosopher {
-    int             id;
-    int             eat_count;
-    long            last_meal_time;
-    pthread_mutex_t *right_fork;
-    pthread_mutex_t *left_fork;
-    struct s_simulation *simulation;
-} t_philosopher;
+typedef struct s_simulation
+{
+	int					n_philo;
+	int					meals_limit;
+	int					is_alive;	
+	long				time_eat;
+	long				time_die;
+	long				time_sleep;
+	pthread_mutex_t		*forks;
+	pthread_mutex_t mutex_status;
+	pthread_mutex_t		alive_mutex;
+}						t_simulation;
 
-typedef struct s_simulation {
-    int             num_philosophers;
-    int             meals_limit;
-    long            time_to_die;
-    long            time_to_eat;
-    long            time_to_sleep;
-    t_philosopher   *philosophers;
-    pthread_mutex_t *forks;
-    pthread_t       *threads;
-} t_simulation;
+typedef struct s_philo
+{
+	int					id;
+	int					n_eat;
+	long				start_time;
+	int					right_fork;
+	int					left_fork;
+	long				last_meal_time;
+	t_simulation	*sim;
+	pthread_t			threads;
+}						t_philo;
 
-int     validate_arguments(int argc);
-void    parse_arguments(t_simulation *sim, int argc, char **argv);
-int     allocate_simulation_memory(t_simulation *sim);
-void    initialize_forks(t_simulation *sim);
-void    initialize_philosophers(t_simulation *sim);
-long    get_current_time(void);
-void    *philosopher_routine(void *arg);
-void    create_threads(t_simulation *sim);
-void    monitor_philosophers(t_simulation *sim);
-void    cleanup_simulation(t_simulation *sim);
+long					get_current_time(void);
+int						check_av(int argc, char **argv);
+t_philo	*init_philo(int n_philo);
+int						validate_arguments(t_simulation *sim, int argc,
+							char **argv);
+void    initialize(t_philo *philo, t_simulation *sim);
+void *philo_routine(void *arg);
 
-#endif
+
+#
